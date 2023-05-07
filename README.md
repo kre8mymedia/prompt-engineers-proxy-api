@@ -1,7 +1,5 @@
 # Prompt Engineers - API Proxy Server
-
-### JWT Authenication Docs From Here
-https://testdriven.io/blog/fastapi-jwt-auth/
+https://promptengineers.ai
 
 ### Run Development environment by running the following...
 ```bash
@@ -21,4 +19,7 @@ bash scripts/build.sh
 
 ## Deploy using kubernetes and helm
 bash scripts/upgrade.sh $APP_ENV $NAMESPACE $IMAGE_REPO
+
+## Start Docker Environment
+docker-compose up --build
 ```

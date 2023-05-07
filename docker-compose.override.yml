@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  web:
+    env_file:
+      - ./.env
+    command: uvicorn main:app --host 0.0.0.0 --reload --port 5000
+    volumes:
+      - ./:/app
+    ports:
+      - 5000:5000
+      - 5678:5678
