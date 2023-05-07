@@ -1,8 +1,8 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: api-proxy-nginx
-  namespace: api-proxy-production
+  name: pe-proxy-nginx
+  namespace: pe-proxy
   annotations:
     kubernetes.io/ingress.class: nginx
 spec:

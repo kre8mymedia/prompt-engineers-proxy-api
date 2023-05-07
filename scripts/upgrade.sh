@@ -2,6 +2,7 @@
 
 read -p "Please enter the APP_ENV: " APP_ENV
 read -p "Please enter the NAMESPACE: " NAMESPACE
+read -p "Please enter the REGISTRY_NAME: " REGISTRY_NAME
 echo "Is this a release? (yes/no)"
 read answer
 if [ "$answer" == "yes" ]; then
@@ -18,7 +19,7 @@ if [ "$answer" == "yes" ]; then
 elif [ "$answer" == "no" ]; then
     HPA=false
     TAG=$(git rev-parse HEAD | cut -c1-8)
-    ENV_FILE=.env
+    ENV_FILE=.env.dev
     echo "Creating development build.."
 else
     echo "Invalid input. Please enter 'yes' or 'no'."
@@ -32,9 +33,13 @@ set +a
 helm -n $NAMESPACE upgrade -i --debug --wait --atomic \
 --set autoscaling.enabled=$HPA \
 --set appEnv=$APP_ENV \
---set image.repository=registry.gitlab.com/prompt-engineers/api-proxy:$TAG \
+--set image.repository=$REGISTRY_NAME:$TAG \
 --set apiVersion=$TAG \
 --set host=$HOST \
+--set apiUrl=$API_URL \
+--set apiKey=$API_KEY \
+--set s3Bucket=$S3_BUCKET \
+--set vectorestore=$VECTORSTORE \
 server ./k8s/charts
 
 echo ""

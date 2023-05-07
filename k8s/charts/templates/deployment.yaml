@@ -22,10 +22,10 @@ spec:
       - name: server
         command: ["uvicorn"]
         imagePullPolicy: IfNotPresent
-        args: ["src.app.main:app", "--port=5000", "--host", "0.0.0.0"]
+        args: ["main:app", "--port=8000", "--host", "0.0.0.0"]
         image: {{ .Values.image.repository }}
         ports:
-          - containerPort: 5000
+          - containerPort: 8000
         resources:
           requests:
             cpu: 250m
@@ -36,18 +36,21 @@ spec:
         env:
           - name: APP_DEBUG
             value: "false"
-          - name: ALGO
-            value : HS256
-          - name: APP_URL
-            value : https://api.promptengineers.ai
           - name: APP_NAME
-            value : "Prompt Engineers"
+            value : "Prompt Engineers - Proxy Server"
           - name: APP_ENV
             value : {{ .Values.appEnv }}
+          - name: API_URL
+            value : api.promptengineers.ai
           - name: API_VERSION
             value : {{ .Values.apiVersion | quote }}
-          - name: HOST
-            value : {{ .Values.host }}
+          - name: API_KEY
+            value : {{ .Values.apiKey }}
+          - name: S3_BUCKET
+            value : {{ .Values.s3Bucket }}
+          - name: VECTORSTORE
+            value : {{ .Values.vectorestore }}
+
           
 ---
 apiVersion: apps/v1

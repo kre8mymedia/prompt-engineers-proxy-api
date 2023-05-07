@@ -38,7 +38,8 @@ cd $(dirname $0)
 cd ../
 DIR=$(pwd)
 
-IMAGE_URL="registry.gitlab.com/prompt-engineers/api-proxy:$TAG"
+# IMAGE_URL="registry.gitlab.com/prompt-engineers/api-proxy:$TAG"
+IMAGE_URL="sk8er71091/prompt-engineers-api-proxy:$TAG"
 
 docker build -t $IMAGE_URL .
 docker push $IMAGE_URL

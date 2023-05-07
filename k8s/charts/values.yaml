@@ -18,18 +18,10 @@ image:
 appSecret:
 appEnv:
 host:
-algo:
-openAiApiKey:
-stripeSecret:
-formioOssToken:
-redisUrl:
-apiVersion:
-smtpAppPassword:
-pineconeApiKey:
-
-## S3 Bucket
-s3AccessKey:
-s3SecretKey:
+apiKey:
+apiUrl:
+s3Bucket:
+vectorestore:
 
 randomSum:
 imagePullSecretName: "gitlab-credentials"
