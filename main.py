@@ -1,15 +1,12 @@
-import os
+"""Application Entrypoint"""
 import asyncio
 import websockets
 from fastapi import FastAPI, WebSocket
 from starlette.responses import HTMLResponse
 
+## Modules
 from pages.home import html_template
-from src.services.websocket import forward
-
-API_KEY = os.environ["API_KEY"]
-API_URL = os.environ["API_URL"]
-API_WS_URL = f"wss://{API_URL}/chat-vector-db?api_key={API_KEY}&bucket=prompt-engineers-dev&path=formio.pkl"
+from src.config import API_WS_URL
 
 app = FastAPI()
 
