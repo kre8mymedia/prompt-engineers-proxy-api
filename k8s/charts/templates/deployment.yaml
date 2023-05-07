@@ -1,0 +1,87 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: server
+  annotations:
+    rollme: {{ randAlphaNum 5 | quote }}
+  labels:
+    app: server
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret }} 
+      containers:
+      - name: server
+        command: ["uvicorn"]
+        imagePullPolicy: IfNotPresent
+        args: ["src.app.main:app", "--port=5000", "--host", "0.0.0.0"]
+        image: {{ .Values.image.repository }}
+        ports:
+          - containerPort: 5000
+        resources:
+          requests:
+            cpu: 250m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        env:
+          - name: APP_DEBUG
+            value: "false"
+          - name: ALGO
+            value : HS256
+          - name: APP_URL
+            value : https://api.promptengineers.ai
+          - name: APP_NAME
+            value : "Prompt Engineers"
+          - name: APP_ENV
+            value : {{ .Values.appEnv }}
+          - name: API_VERSION
+            value : {{ .Values.apiVersion | quote }}
+          - name: HOST
+            value : {{ .Values.host }}
+          
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  annotations:
+    rollme: {{ randAlphaNum 5 | quote }}
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      volumes:
+      - name: config
+        configMap:
+          name: nginx-config
+          items:
+          - key: config
+            path: default.conf
+      containers:
+      - name: nginx
+        image: nginx
+        volumeMounts:
+        - name: config
+          mountPath: /etc/nginx/conf.d
+        ports:
+        - containerPort: 80
+          name: http
+          protocol: TCP

@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: api-proxy-nginx
+  namespace: api-proxy-development
+  annotations:
+    kubernetes.io/ingress.class: nginx
+spec:
+  rules:
+  - host: dev-proxy.promptengineers.ai
+    http:
+      paths:
+      - backend:
+          service:
+            name: nginx
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
