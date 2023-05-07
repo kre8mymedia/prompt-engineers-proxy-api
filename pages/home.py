@@ -9,6 +9,7 @@ html_template = """
         <h1>Prompt Engineers - API Proxy</h1>
         <a href="/docs">API Client</a>
         <a href="/redoc">API Docs</a>
+        <a href="https://github.com/kre8mymedia/prompt-engineers-proxy-api">Github</a>
     </body>
 </html>
 """
