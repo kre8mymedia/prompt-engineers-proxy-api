@@ -22,3 +22,4 @@ db
 .pytest_cache
 langchain.readthedocs.io
 .gitlab-ci.yml
+LICENSE
