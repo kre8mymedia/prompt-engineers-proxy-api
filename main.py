@@ -78,3 +78,31 @@ async def websocket_proxy_endpoint(websocket: WebSocket):
                 print(f"Error forwarding messages to client: {e}")
 
         await asyncio.gather(forward_to_target(), forward_to_client())
+        
+###############################################
+##  Sockets
+###############################################
+@app.websocket("/miele-proxy")
+async def websocket_proxy_endpoint(websocket: WebSocket):
+    await websocket.accept()
+
+    async with websockets.connect(f"wss://{API_URL}/chat-vector-db?api_key={API_KEY}&bucket={S3_BUCKET}&path=miele-vectorstore.pkl") as target_socket:
+        async def forward_to_target():
+            try:
+                while True:
+                    message = await websocket.receive_text()
+                    print("Forwarding message:", message)
+                    await target_socket.send(message)
+            except Exception as e:
+                print(f"Error forwarding messages to target: {e}")
+
+        async def forward_to_client():
+            try:
+                while True:
+                    message = await target_socket.recv()
+                    print("Forwarding message:", message)
+                    await websocket.send_text(message)
+            except Exception as e:
+                print(f"Error forwarding messages to client: {e}")
+
+        await asyncio.gather(forward_to_target(), forward_to_client())
