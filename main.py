@@ -26,7 +26,7 @@ async def get_root():
 ###############################################
 ##  Sockets
 ###############################################
-@app.websocket("/ws-proxy")
+@app.websocket("/ws/proxy")
 async def websocket_proxy_endpoint(websocket: WebSocket):
     await websocket.accept()
 
