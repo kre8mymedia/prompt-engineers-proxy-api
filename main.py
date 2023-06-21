@@ -4,6 +4,7 @@ import asyncio
 import httpx
 import websockets
 from fastapi import FastAPI, HTTPException, Request, WebSocket
+from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse
 
 ## Modules
@@ -12,7 +13,20 @@ from src.config import API_KEY, API_URL, API_WS_URL
 from src.models.req_body import RequestBodyContextChat
 from src.models.res_body import ResponseBodyContextChat
 
-app = FastAPI()
+app = FastAPI(
+    title='Prompt Engineers Proxy API', 
+    version='v0.0.1'
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 ###############################################
 ##  Pages
@@ -31,7 +45,7 @@ async def get_root():
 ##  Routes
 ###############################################
 @app.post(
-    "/api/v1/chat/vectorstore/message",
+    "/api/proxy",
     response_model=ResponseBodyContextChat,
     tags=["Chat - WebSocket Stream"],
     # description=CHAT_VECTORSTORE_SOCKET_MESSAGE_DESCRIPTION
