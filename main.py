@@ -1,17 +1,21 @@
 """Application Entrypoint"""
 import asyncio
+
+import httpx
 import websockets
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI, HTTPException, Request, WebSocket
 from starlette.responses import HTMLResponse
 
 ## Modules
 from pages.home import html_template
-from src.config import API_WS_URL
+from src.config import API_KEY, API_URL, API_WS_URL
+from src.models.req_body import RequestBodyContextChat
+from src.models.res_body import ResponseBodyContextChat
 
 app = FastAPI()
 
 ###############################################
-##  Routes
+##  Pages
 ###############################################
 @app.get(
     "/", 
@@ -22,6 +26,46 @@ app = FastAPI()
 async def get_root():
     """Default Home Page"""
     return html_template
+
+###############################################
+##  Routes
+###############################################
+@app.post(
+    "/api/v1/chat/vectorstore/message",
+    response_model=ResponseBodyContextChat,
+    tags=["Chat - WebSocket Stream"],
+    # description=CHAT_VECTORSTORE_SOCKET_MESSAGE_DESCRIPTION
+)
+async def send_message_to_context_chat_socket(
+    request: Request,
+    body: RequestBodyContextChat,
+    channel: str or None = None
+):
+    # URL of the external API endpoint
+    url = f'https://{API_URL}/api/v1/chat/vectorstore/message?channel={channel}'
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY
+    }
+    data = body.dict()  # Convert the body to a dict, which will be converted to JSON
+    
+    timeout = httpx.Timeout(30.0, read=30.0)  # Increase the timeout to 10 seconds for connect and 30 seconds for read
+
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        response = await client.post(url, json=data, headers=headers)
+
+    print(url)
+    print(response.content)
+
+    if response.status_code != 200:
+        raise HTTPException(status_code=500, detail="Failed to send message to context chat")
+    
+    # return response.json()
+    return {
+        "status": "success", 
+        "channel": channel,
+        "message": "Message successfully sent!"
+    }
 
 ###############################################
 ##  Sockets
