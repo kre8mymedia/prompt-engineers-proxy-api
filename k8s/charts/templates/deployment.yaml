@@ -38,10 +38,12 @@ spec:
             value: "false"
           - name: APP_NAME
             value : "Prompt Engineers - Proxy Server"
+          - name: WS_URL
+            value : wss://api.promptengineers.ai
+          - name: API_URL
+            value : https://api.promptengineers.ai
           - name: APP_ENV
             value : {{ .Values.appEnv }}
-          - name: API_URL
-            value : api.promptengineers.ai
           - name: API_VERSION
             value : {{ .Values.apiVersion | quote }}
           - name: API_KEY
