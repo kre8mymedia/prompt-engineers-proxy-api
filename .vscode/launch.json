@@ -18,6 +18,22 @@
                 }
             ]
         },
+        {
+            "name": "Python: FastAPIv2",
+            "type": "python",
+            "request": "launch",
+            "module": "uvicorn",
+            "args": [
+                "main:app",
+                "--log-level",
+                "debug",
+                "--port",
+                "5000"
+            ],
+            "jinja": true,
+            "justMyCode": true,
+            "envFile": "${workspaceFolder}/.env"
+          }
     ]
 }
   

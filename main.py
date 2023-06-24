@@ -1,11 +1,13 @@
 """Application Entrypoint"""
 import asyncio
+import traceback
 
 import httpx
 import websockets
 from fastapi import FastAPI, HTTPException, Request, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse
+from starlette.websockets import WebSocketDisconnect
 
 ## Modules
 from pages.home import html_template
@@ -56,7 +58,7 @@ async def send_message_to_context_chat_socket(
     channel: str or None = None
 ):
     # URL of the external API endpoint
-    url = f'https://{API_URL}/api/v1/chat/vectorstore/message?channel={channel}'
+    url = f'http://{API_URL}/api/v1/chat/vectorstore/message?channel={channel}'
     headers = {
         "Content-Type": "application/json",
         "x-api-key": API_KEY
@@ -85,25 +87,38 @@ async def send_message_to_context_chat_socket(
 ##  Sockets
 ###############################################
 @app.websocket("/ws/proxy")
-async def websocket_proxy_endpoint(websocket: WebSocket):
+async def websocket_proxy_endpoint(
+    websocket: WebSocket,
+    session: str or None = None,
+):
     await websocket.accept()
 
-    async with websockets.connect(API_WS_URL) as target_socket:
+    async with websockets.connect(f'{API_WS_URL}&session={session}', timeout=120.0) as target_socket:
         async def forward_to_target():
             try:
                 while True:
-                    message = await websocket.receive_text()
-                    print("Forwarding message:", message)
-                    await target_socket.send(message)
+                    try:
+                        message = await websocket.receive_text()
+                        # print("Forwarding message:", message)
+                        await target_socket.send(message)
+                    except WebSocketDisconnect:
+                        print("Target disconnected")
+                        await target_socket.close() 
+                        break
             except Exception as e:
                 print(f"Error forwarding messages to target: {e}")
 
         async def forward_to_client():
             try:
                 while True:
-                    message = await target_socket.recv()
-                    print("Forwarding message:", message)
-                    await websocket.send_text(message)
+                    try:
+                        message = await target_socket.recv()
+                        # print("Forwarding message:", message)
+                        await websocket.send_text(message)
+                    except WebSocketDisconnect:
+                        print("Client disconnected")
+                        await websocket.close() 
+                        break
             except Exception as e:
                 print(f"Error forwarding messages to client: {e}")
 
