@@ -58,7 +58,7 @@ async def send_message_to_context_chat_socket(
     channel: str or None = None
 ):
     # URL of the external API endpoint
-    url = f'http://{API_URL}/api/v1/chat/vectorstore/message?channel={channel}'
+    url = f'{API_URL}/api/v1/chat/vectorstore/message?channel={channel}'
     headers = {
         "Content-Type": "application/json",
         "x-api-key": API_KEY

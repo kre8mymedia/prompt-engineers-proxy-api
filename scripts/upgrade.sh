@@ -36,6 +36,7 @@ helm -n $NAMESPACE upgrade -i --debug --wait --atomic \
 --set image.repository=$REGISTRY_NAME:$TAG \
 --set apiVersion=$TAG \
 --set host=$HOST \
+--set wsUrl=$WS_URL \
 --set apiUrl=$API_URL \
 --set apiKey=$API_KEY \
 --set s3Bucket=$S3_BUCKET \
