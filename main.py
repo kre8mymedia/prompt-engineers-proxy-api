@@ -65,7 +65,7 @@ async def send_message_to_context_chat_socket(
     }
     data = body.dict()  # Convert the body to a dict, which will be converted to JSON
     
-    timeout = httpx.Timeout(30.0, read=30.0)  # Increase the timeout to 10 seconds for connect and 30 seconds for read
+    timeout = httpx.Timeout(30.0, read=120.0)  # Increase the timeout to 10 seconds for connect and 30 seconds for read
 
     async with httpx.AsyncClient(timeout=timeout) as client:
         response = await client.post(url, json=data, headers=headers)
