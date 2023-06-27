@@ -6,14 +6,14 @@ import httpx
 import websockets
 from fastapi import FastAPI, HTTPException, Request, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from starlette.responses import HTMLResponse
-from starlette.websockets import WebSocketDisconnect
-
 ## Modules
 from pages.home import html_template
 from src.config import API_KEY, API_URL, API_WS_URL
 from src.models.req_body import RequestBodyContextChat
 from src.models.res_body import ResponseBodyContextChat
+from src.utils.logger import logger
+from starlette.responses import HTMLResponse
+from starlette.websockets import WebSocketDisconnect
 
 app = FastAPI(
     title='Prompt Engineers Proxy API', 
@@ -30,6 +30,10 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.on_event("startup")
+async def startup_event():
+    logger.info(f'Websocket Host: {API_WS_URL}')
 
 ###############################################
 ##  Pages
